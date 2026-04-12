@@ -151,6 +151,72 @@ with tab2:
                       title='Bar Chart of Sex vs. Smoker')
     st.plotly_chart(fig_bar1)
 
+with tab3:
+    from scipy.stats import ttest_ind
+
+    st.subheader('Hypothesis Testing')
+
+    st.markdown('Research Question:')
+    st.markdown('Does smoking affect systolic blood pressure differently in males and females?')
+
+    st.markdown('Null Hypothesis (H0): Smoking has the same effect on systolic blood pressure for males and females.')
+    st.markdown('Alternative Hypothesis (Ha): Smoking affects systolic blood pressure differently for males and females.')
+
+    df_hyp = df_clean.copy()
+
+    df_hyp['smoker_group'] = np.where(df_hyp['currentSmoker'] == 1, 'Smoker', 'Non-Smoker')
+    df_hyp['gender_group'] = np.where(df_hyp['male'] == 1, 'Male', 'Female')
+
+    st.divider()
+
+    st.markdown('### Group Means')
+    group_means = df_hyp.groupby(['gender_group', 'smoker_group'])['sysBP'].mean().reset_index()
+    st.dataframe(group_means)
+
+    fig_hyp = px.box(df_hyp,
+                     x='gender_group',
+                     y='sysBP',
+                     color='smoker_group',
+                     title='Systolic Blood Pressure by Gender and Smoking Status')
+    st.plotly_chart(fig_hyp)
+
+    st.divider()
+
+    male_smokers = df_hyp[(df_hyp['male'] == 1) & (df_hyp['currentSmoker'] == 1)]['sysBP']
+    male_nonsmokers = df_hyp[(df_hyp['male'] == 1) & (df_hyp['currentSmoker'] == 0)]['sysBP']
+
+    female_smokers = df_hyp[(df_hyp['male'] == 0) & (df_hyp['currentSmoker'] == 1)]['sysBP']
+    female_nonsmokers = df_hyp[(df_hyp['male'] == 0) & (df_hyp['currentSmoker'] == 0)]['sysBP']
+
+    male_tstat, male_pval = ttest_ind(male_smokers, male_nonsmokers, equal_var=False)
+    female_tstat, female_pval = ttest_ind(female_smokers, female_nonsmokers, equal_var=False)
+
+    results_df = pd.DataFrame({
+        'Group': ['Males', 'Females'],
+        'T-Statistic': [male_tstat, female_tstat],
+        'P-Value': [male_pval, female_pval]
+    })
+
+    st.markdown('### T-Test Results')
+    st.dataframe(results_df)
+
+    alpha = 0.05
+
+    st.markdown('### Interpretation')
+
+    if male_pval < alpha:
+        st.markdown('For males, there is a statistically significant difference in systolic blood pressure between smokers and non-smokers.')
+    else:
+        st.markdown('For males, there is no statistically significant difference in systolic blood pressure between smokers and non-smokers.')
+
+    if female_pval < alpha:
+        st.markdown('For females, there is a statistically significant difference in systolic blood pressure between smokers and non-smokers.')
+    else:
+        st.markdown('For females, there is no statistically significant difference in systolic blood pressure between smokers and non-smokers.')
+
+    st.markdown('By comparing the male and female results, we can see whether smoking appears to affect systolic BP differently across genders.')
+
+
 with tab4:
     import sklearn
     from sklearn.model_selection import train_test_split

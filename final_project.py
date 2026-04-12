@@ -162,7 +162,7 @@ with tab3:
     st.markdown('Does smoking affect systolic blood pressure differently in males and females?')
 
     st.markdown('Null Hypothesis (H0): Smoking has the same effect on systolic blood pressure for males and females.')
-    st.markdown('Alternative Hypothesis (Ha): Smoking affects systolic blood pressure differently for males and females.')
+    st.markdown('Alternative Hypothesis (H1): Smoking affects systolic blood pressure differently for males and females.')
 
     df_hyp = df_clean.copy()
 
@@ -193,14 +193,43 @@ with tab3:
     male_tstat, male_pval = ttest_ind(male_smokers, male_nonsmokers, equal_var=False)
     female_tstat, female_pval = ttest_ind(female_smokers, female_nonsmokers, equal_var=False)
 
+    def welch_df(x1, x2):
+        s1 = np.var(x1, ddof=1)
+        s2 = np.var(x2, ddof=1)
+        n1 = len(x1)
+        n2 = len(x2)
+
+        numerator = (s1 / n1 + s2 / n2) ** 2
+        denominator = ((s1 / n1) ** 2) / (n1 - 1) + ((s2 / n2) ** 2) / (n2 - 1)
+
+        return numerator / denominator
+
+    male_df = welch_df(male_smokers, male_nonsmokers)
+    female_df = welch_df(female_smokers, female_nonsmokers)
+
     results_df = pd.DataFrame({
         'Group': ['Males', 'Females'],
+        'Degrees of Freedom': [male_df, female_df],
+        'Smoker Mean SysBP': [male_smokers.mean(), female_smokers.mean()],
+        'Non-Smoker Mean SysBP': [male_nonsmokers.mean(), female_nonsmokers.mean()],
+        'Mean Difference': [male_smokers.mean() - male_nonsmokers.mean(),
+                            female_smokers.mean() - female_nonsmokers.mean()],
         'T-Statistic': [male_tstat, female_tstat],
         'P-Value': [male_pval, female_pval]
     })
 
     st.markdown('### T-Test Results')
-    st.dataframe(results_df)
+
+    st.dataframe(results_df.style.format({
+        'Smoker Mean SysBP': '{:.2f}',
+        'Non-Smoker Mean SysBP': '{:.2f}',
+        'Mean Difference': '{:.2f}',
+        'T-Statistic': '{:.4f}',
+        'Degrees of Freedom': '{:.2f}',
+        'P-Value': '{:.14f}'
+    }))
+
+    st.divider()
 
     alpha = 0.05
 
@@ -216,7 +245,8 @@ with tab3:
     else:
         st.markdown('For females, there is no statistically significant difference in systolic blood pressure between smokers and non-smokers.')
 
-    st.markdown('By comparing the male and female results, we can see whether smoking appears to affect systolic BP differently across genders.')
+    st.markdown('Both groups show significant results.')
+    st.markdown('The mean differences provide additional context for how systolic blood pressure changes between smokers and non-smokers within each gender.')
 
 
 with tab4:

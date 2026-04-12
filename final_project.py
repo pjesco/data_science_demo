@@ -158,16 +158,9 @@ with tab4:
     from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
     from sklearn.ensemble import RandomForestClassifier
 
-    X = pd.DataFrame(df_clean['cigsPerDay'])
+    X = pd.DataFrame(df_clean[['cigsPerDay','age','male','education','totChol','sysBP','diaBP','BMI','heartRate','glucose']])
     y=pd.DataFrame(df_clean['prevalentHyp'])
-    #dia = df_clean['diabetes']
-    #dia = ['diabetic' if x == 1 else 'not diabetic' for x in dia]
-    #y = pd.DataFrame(dia)
-    #c = 0
-    #for i in df_clean['diabetes']:
-    #    if i==0:
-    #        c+=1
-    #print(f'Distribution of values: {c/(len(df_clean['diabetes']))}')
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     scaler = StandardScaler()

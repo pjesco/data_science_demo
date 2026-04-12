@@ -17,7 +17,7 @@ if file_upload is not None:
 else:
     df = pd.read_csv("logs/framingham.csv")
 
-tab1, tab2, tab3 = st.tabs(["Raw Data","EDA","Hypothesis Testing"])
+tab1, tab2, tab3, tab4 = st.tabs(["Raw Data","EDA","Hypothesis Testing","Machine Learning"])
 
 with tab1:
     st.subheader("Raw Data")
@@ -150,5 +150,57 @@ with tab2:
                       y='currentSmoker',
                       title='Bar Chart of Sex vs. Smoker')
     st.plotly_chart(fig_bar1)
+
+with tab4:
+    import sklearn
+    from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
+    from sklearn.ensemble import RandomForestClassifier
+
+    X = pd.DataFrame(df_clean['cigsPerDay'])
+    y=pd.DataFrame(df_clean['prevalentHyp'])
+    #dia = df_clean['diabetes']
+    #dia = ['diabetic' if x == 1 else 'not diabetic' for x in dia]
+    #y = pd.DataFrame(dia)
+    #c = 0
+    #for i in df_clean['diabetes']:
+    #    if i==0:
+    #        c+=1
+    #print(f'Distribution of values: {c/(len(df_clean['diabetes']))}')
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    classifier = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
+    classifier.fit(X_train, y_train)
+    y_pred = classifier.predict(X_test)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    st.subheader('Supervised Learning')
+
+    st.markdown('Predicting Prevalent Hypertension status based on cigsPerDay')
+    st.markdown('Random Forest Classifier')
+    st.markdown(f'Accuracy: {accuracy * 100:.2f}%')
+    f1 = f1_score(y_true=y_test, y_pred=y_pred)
+    st.markdown(f'F1 Score: {f1:.2f}')
+
+    conf_matrix = confusion_matrix(y_test, y_pred, labels=[1, 0])
+
+    fig, ax = plt.subplots()
+
+    sns.heatmap(conf_matrix, annot=True, fmt='g', cmap='Reds', cbar=False,
+                xticklabels=['Prevalent Hyp', 'not Prevalent Hyp'],
+                yticklabels=['Prevalent Hyp', 'not Prevalent Hyp'],
+                ax=ax)
+
+    ax.set_title('Confusion Matrix Heatmap')
+    ax.set_xlabel('Predicted Labels')
+    ax.set_ylabel('True Labels')
+
+    st.pyplot(fig)
+
 
 

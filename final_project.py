@@ -92,21 +92,13 @@ with tab2:
     st.caption('Summary Statistics')
 
     st.divider()
-
-    fig_hist1 = px.histogram(df_clean,
-                             x='education',
-                             title='Participant Education Distribution')
-    st.plotly_chart(fig_hist1)
-
-    fig_hist2 = px.histogram(df_clean,
-                             x='age',
-                             title='Age Distribution')
-    st.plotly_chart(fig_hist2)
-
-    fig_hist3 = px.histogram(df_clean,
-                             x='cigsPerDay',
-                             title='Cigarettes Per Day Distribution')
-    st.plotly_chart(fig_hist3)
+    st.markdown('Histograms')
+    selected_parameter = st.selectbox('Select Parameter',
+                                        ['education','age','cigsPerDay'])
+    fig_hist = px.histogram(df_clean,
+                            x=selected_parameter,
+                            title=f'Histogram of {selected_parameter}')
+    st.plotly_chart(fig_hist)
 
     corr = df_clean.corr(numeric_only=True)
 
@@ -128,10 +120,20 @@ with tab2:
                               title='Age vs. Cigarettes Per Day')
     st.plotly_chart(fig_scatter2)
 
-    fig_box1 = px.box(df_clean,
-                      y=['age','cigsPerDay','totChol','sysBP','diaBP','BMI','heartRate','glucose'],
-                      title='Box Plot')
-    st.plotly_chart(fig_box1)
+    #fig_box1 = px.box(df_clean,
+    #                  y=['age','cigsPerDay','totChol','sysBP','diaBP','BMI','heartRate','glucose'],
+    #                  title='Box Plot')
+    #st.plotly_chart(fig_box1)
+    st.divider()
+    st.markdown('BoxPlot')
+    selected_parameter = st.selectbox('Select Parameter',
+                                        df_clean.columns)
+    fig5 = px.box(
+        df_clean,
+        x=selected_parameter,
+        title=f'Boxplot of {selected_parameter}'
+    )
+    st.plotly_chart(fig5)
 
     fig_scatter2 = px.scatter(df_clean,
                                  x='totChol',

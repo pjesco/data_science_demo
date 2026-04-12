@@ -174,7 +174,7 @@ with tab4:
     accuracy = accuracy_score(y_test, y_pred)
     st.subheader('Supervised Learning')
 
-    st.markdown('Predicting Prevalent Hypertension status based on cigsPerDay')
+    st.markdown('Predicting Prevalent Hypertension')
     st.markdown('Random Forest Classifier')
     st.markdown(f'Accuracy: {accuracy * 100:.2f}%')
     f1 = f1_score(y_true=y_test, y_pred=y_pred)

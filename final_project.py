@@ -5,8 +5,9 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-st.title('Heart Study Data Science Project')
-st.header('Parker Esco and Andres Acosta')
+st.title('Framingham Heart Study Analysis')
+st.subheader('Exploratory Data Analysis, Hypothesis Testing, and Machine Learning')
+st.markdown('**Parker Esco and Andres Acosta**')
 
 st.divider()
 
@@ -22,14 +23,34 @@ tab1, tab2, tab3, tab4 = st.tabs(["Raw Data", "EDA", "Hypothesis Testing", "Mach
 with tab1:
     st.subheader("Raw Data")
     st.dataframe(df)
-    st.caption("Framingham Heart Study Data")
+    st.caption("Framingham Heart Study Data (framingham.csv)")
 
     st.divider()
 
-    st.markdown(f'Data Shape: {df.shape}')
-    st.markdown(f'Data Columns: {df.columns}')
+    st.markdown('### Data Shape')
+    st.write(f"Rows: {df.shape[0]}")
+    st.write(f"Columns: {df.shape[1]}")
+    st.markdown('### Data Column Variables')
+    st.caption("Note: This dataset reflects measurements taken at the time of examination and does not track changes over time.")
+    st.write('male - male or female')
+    st.write('age - age of patient')
+    st.write('education - level of education')
+    st.write('currentSmoker - does patient currently smoke')
+    st.write('cigsPerDay - amount of cigarettes the patient smokes in a day')
+    st.write('BPMeds - does the patient currently takes BP medications')
+    st.write('prevalentStroke - has the patient previously suffered a stroke')
+    st.write('prevalentHyp - does the patient have hypertension')
+    st.write('diabetes - does the patient have diabetes')
+    st.write('totChol - patients cholesterol levels')
+    st.write('sysBP - systolic blood pressure')
+    st.write('diaBP - diastolic blood pressure')
+    st.write('BMI - body mass index')
+    st.write('heartRate patients heart rate')
+    st.write('glucose - patients blood sugar')
+    st.write('TenYearCHD - does the patient have a risk of developing coronary heart disease in the next ten years')
 
-    st.markdown(f'Info:')
+
+    st.markdown('### Null Values')
     info_df = pd.DataFrame({
         'Dtype': df.dtypes,
         'Non-Null Count': df.notnull().sum(),
@@ -48,6 +69,7 @@ with tab1:
     })
     st.dataframe(info_df)
     st.caption('Null values filled using column mean')
+
 
 
     def detect_outliers(df, column):

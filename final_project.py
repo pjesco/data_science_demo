@@ -71,7 +71,6 @@ with tab1:
     st.caption('Null values filled using column mean')
 
 
-
     def detect_outliers(df, column):
         Q1 = df[column].quantile(0.25)
         Q3 = df[column].quantile(0.75)
@@ -181,10 +180,10 @@ with tab2:
 with tab3:
     from scipy.stats import ttest_ind
 
-    st.subheader('Hypothesis Testing')
+    st.header('Hypothesis Testing')
 
-    st.markdown('Research Question:')
-    st.markdown('Does smoking affect systolic blood pressure differently in males and females?')
+    st.markdown('### Research Question:')
+    st.markdown('### Does smoking affect systolic blood pressure differently in males and females?')
 
     st.markdown('Null Hypothesis (H0): Smoking has the same effect on systolic blood pressure for males and females.')
     st.markdown(
@@ -277,8 +276,13 @@ with tab3:
         st.markdown(
             'For females, there is no statistically significant difference in systolic blood pressure between smokers and non-smokers.')
 
-    st.markdown('Both groups show significant results.')
-    st.markdown('The mean differences provide additional context for how systolic blood pressure changes between smokers and non-smokers within each gender.')
+    st.markdown('After conducting the t-test, males have a t-score of -2.0079 and p-value of 0.0449, and females have a t-score of -7.6326'
+                ' and p-value of <0.0001. Since the p-value of both genders is < 0.05, they are both statistically significant and we fail '
+                'to reject the null hypothesis (H0). Smoking significantly affects systolic blood pressure in both males and females, '
+                'but not in the way we expected.')
+    st.markdown('Upon closer inspection, the mean BP of smokers is actually LOWER than non-smokers in both genders, which is the opposite '
+                'of general expectations. This points to the presence of confounding factors such as age or BMI (BP tends to increase with '
+                'age / have a higher BMI)')
 
 with tab4:
     import sklearn
